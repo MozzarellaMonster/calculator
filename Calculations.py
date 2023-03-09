@@ -6,6 +6,10 @@ class Calc:
     def __init__(self):
         self.memory = []
     
+    def read(self):
+        # Implement reading of the text input here
+        pass
+
     # Arithmetic operations
     def add(self, a, b):
         return a + b
@@ -19,8 +23,7 @@ class Calc:
     def divide(self, a, b):
         if b == 0:
             return "Cannot divide by zero!"
-        else:
-            return a/b
+        return a/b
         
     # More complex operations
     def root(self, a):
@@ -28,7 +31,11 @@ class Calc:
     
     def square(self, a):
         return pow(a, 2)
-
+    
+    def frac(self, a):
+        if a == 0:
+            return "Cannot divide by zero!"
+        return 1/a
 
     # Memory management
     def store(self, a):
