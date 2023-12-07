@@ -5,7 +5,6 @@ import Calculations
 # Create the calculator
 calc = Calculations.Calc()
 
-
 # Define the window layout
 sg.set_options(font="Arial 12")
 
@@ -31,7 +30,7 @@ def update_input(in_value, in_math_op=False):
     if input.get() == "0":
         input.update(value=in_value)
     elif in_value == ".":
-        if "." in input.get():
+        if dec_in_input():
             pass
         else:
             input.update(value=input.get() + in_value)
@@ -44,53 +43,67 @@ def delete_last():
     else:
         input.update(value=input.get()[:-1])
 
-def arithmetic_operation(operator, a):
-    equals = False
-    # Infinite loop problem
-    while equals == False:
-        if event == "0":
-            update_input("0", True)
-        if event == "1":
-            update_input("1", True)
-        if event == "2":
-            update_input("2", True)
-        if event == "3":
-            update_input("3", True)
-        if event == "4":
-            update_input("4", True)
-        if event == "5":
-            update_input("5", True)
-        if event == "6":
-            update_input("6", True)
-        if event == "7":
-            update_input("7", True)
-        if event == "8":
-            update_input("8", True)
-        if event == "9":
-            update_input("9", True)
-        if event == "+":
-            update_input("+", True)
-        if event == "-":
-            update_input("-", True)
-        if event == "*":
-            update_input("*", True)
-        if event == "/":
-            update_input("/", True)
-        if event == ".":
-            update_input(".", True)
-        if event == "equals":
-            equals = True
+def add_to_mem():
+    if dec_in_input():
+        calc.store(float(input.get()))
+    else:
+        calc.store(int(input.get()))
 
-    b = float(input.get())
+def arithmetic(op):
+    if op == "+":
+        if calc.get_temp() is not None:
+            if dec_in_input():
+                input.update(str(calc.add(calc.get_temp(), float(input.get()))))
+            else:
+                input.update(str(calc.add(calc.get_temp(), int(input.get()))))
+        else:
+            if dec_in_input():
+                calc.set_temp(float(input.get()))
+            else:    
+                calc.set_temp(int(input.get()))
+            calc.op = "+"
+            
+    if op == "-":
+        if calc.get_temp() is not None:
+            if dec_in_input():
+                input.update(str(calc.subtract(calc.get_temp(), float(input.get()))))
+            else:
+                input.update(str(calc.subtract(calc.get_temp(), int(input.get()))))
+        else:
+            if dec_in_input():
+                calc.set_temp(float(input.get()))
+            else:    
+                calc.set_temp(int(input.get()))
+            calc.op = "-"
+    if op == "*":
+        if calc.get_temp() is not None:
+            if dec_in_input():
+                input.update(str(calc.multiply(calc.get_temp(), float(input.get()))))
+            else:
+                input.update(str(calc.multiply(calc.get_temp(), int(input.get()))))
+        else:
+            if dec_in_input():
+                calc.set_temp(float(input.get()))
+            else:
+                calc.set_temp(int(input.get()))
+            calc.op = "*"
+    if op == "/":
+        if calc.get_temp() is not None:
+            if dec_in_input():
+                input.update(str(calc.divide(calc.get_temp(), float(input.get()))))
+            else:
+                input.update(str(calc.divide(calc.get_temp(), int(input.get()))))
+        else:
+            if dec_in_input():
+                calc.set_temp(float(input.get()))
+            else:
+                calc.set_temp(int(input.get()))
+            calc.op = "/"
+    input.update(value="0")
 
-    if operator == "+":
-        return calc.add(a, b)
-    if operator == "-":
-        return calc.subtract(a, b)
-    if operator == "*":
-        return calc.multiply(a, b)
-    if operator == "/":
-        return calc.divide(a, b)
+def dec_in_input():
+    return "." in input.get()
+
 
 # Event loop
 while True:
@@ -103,62 +116,126 @@ while True:
     # Special Keys
     if event == "MC":
         calc.clear()
+
     if event == "MR":
-        calc.recall()
+        input.update(str(calc.recall()))
+
     if event == "M+":
-        calc.store(input.get())
+        add_to_mem()
+
     if event == "M-":
         calc.delete()
+
     if event == "MS":
-        calc.store(input.get())
+        add_to_mem()
+
     if event == "CE":
         delete_last()
+
     if event == "C":
         input.update(value="0")
+
     if event == "\u2190":
         delete_last()
 
     # Mathematic operators
     if event == "%":
-        input.update(str(calc.multiply(float(input.get()), 0.01)))
+        if dec_in_input():
+            input.update(str(calc.multiply(float(input.get()), 0.01)))    
+        else:
+            input.update(str(calc.multiply(int(input.get()), 0.01)))
+
     if event == "1/x":
-        input.update(str(calc.frac(float(input.get()))))
+        if dec_in_input():
+            input.update(str(calc.frac(float(input.get()))))
+        else:
+            input.update(str(calc.frac(int(input.get()))))
+
     if event == "x²":
-        input.update(str(calc.square(float(input.get()))))
+        if dec_in_input():
+            input.update(str(calc.square(float(input.get()))))    
+        else:
+            input.update(str(calc.square(int(input.get()))))
+
     if event == "√x":
-        input.update(str(calc.root(float(input.get()))))
+        if dec_in_input():
+            input.update(str(calc.root(float(input.get()))))
+        else:
+            input.update(str(calc.root(int(input.get()))))
+
     if event == "/":
-        pass #calc.divide(calc.read(), calc.read())
+        arithmetic("/")
+
     if event == "-":
-        pass #calc.subtract(calc.read(), calc.read())
+        arithmetic("-")
+
     if event == "*":
-        pass #calc.multiply(calc.read(), calc.read())
+        arithmetic("*")
+
     if event == "+":
-        input.update(str(arithmetic_operation("+", float(input.get()))))
+        arithmetic("+")
+
     if event == "+/-":
-        input.update(str(calc.multiply(float(input.get()), -1)))
+        if dec_in_input():
+            input.update(str(calc.multiply(float(input.get()), -1)))
+        else:    
+            input.update(str(calc.multiply(int(input.get()), -1)))
+
+    if event == "=":
+        if calc.op == "+":
+            if type(calc.get_temp()) == float:
+                input.update(str(calc.add(calc.get_temp(), float(input.get()))))
+            else:
+                input.update(str(calc.add(calc.get_temp(), int(input.get()))))
+        if calc.op == "-":
+            if type(calc.get_temp()) == float:
+                input.update(str(calc.subtract(calc.get_temp(), float(input.get()))))
+            else:
+                input.update(str(calc.subtract(calc.get_temp(), int(input.get()))))
+        if calc.op == "*":
+            if type(calc.get_temp()) == float:
+                input.update(str(calc.multiply(calc.get_temp(), float(input.get()))))
+            else:
+                input.update(str(calc.multiply(calc.get_temp(), int(input.get()))))
+        if calc.op == "/":
+            if type(calc.get_temp()) == float:
+                input.update(str(calc.divide(calc.get_temp(), float(input.get()))))
+            else:
+                input.update(str(calc.divide(calc.get_temp(), int(input.get()))))
+        calc.set_temp(None)
+        calc.op = None
+
     if event == ".":
         update_input(".")
 
-    # in_valuebers
+    # Numbers
     if event == "0":
         update_input("0")
+
     if event == "1":
         update_input("1")
+
     if event == "2":
         update_input("2")
+
     if event == "3":
         update_input("3")
+
     if event == "4":
         update_input("4")
+
     if event == "5":
         update_input("5")
+
     if event == "6":
         update_input("6")
+
     if event == "7":
         update_input("7")
+
     if event == "8":
         update_input("8")
+
     if event == "9":
         update_input("9")
 
