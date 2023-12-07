@@ -5,10 +5,6 @@ import math
 class Calc:
     def __init__(self):
         self.memory = []
-    
-    def read(self):
-        # Implement reading of the text input here
-        pass
 
     # Arithmetic operations
     def add(self, a, b):
