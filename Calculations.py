@@ -20,7 +20,7 @@ class Calc:
 
     def divide(self, a, b):
         if b == 0:
-            return "Cannot divide by zero!"
+            return 0 # Cannot divide by zero!
         return a/b
         
     # More complex operations
@@ -32,7 +32,7 @@ class Calc:
     
     def frac(self, a):
         if a == 0:
-            return "Cannot divide by zero!"
+            return 0 # Cannot divide by zero!
         return 1/a
     
     # Temporary Memory
