@@ -24,16 +24,11 @@ layout = [
 window = sg.Window(title="Calculator", layout=layout, margins=(7, 7), element_padding=(1, 1))
 
 # Helper functions
-def update_input(in_value, in_math_op=False):
-    if in_math_op:
-        input.update(value="0")
+def update_input(in_value):
     if input.get() == "0":
         input.update(value=in_value)
-    elif in_value == ".":
-        if dec_in_input():
-            pass
-        else:
-            input.update(value=input.get() + in_value)
+    elif in_value == "." and dec_in_input():
+        pass
     else:
         input.update(value=input.get() + in_value)
 
@@ -51,55 +46,40 @@ def add_to_mem():
 
 def arithmetic(op):
     if op == "+":
-        if calc.get_temp() is not None:
-            if dec_in_input():
-                input.update(str(calc.add(calc.get_temp(), float(input.get()))))
-            else:
-                input.update(str(calc.add(calc.get_temp(), int(input.get()))))
-        else:
-            if dec_in_input():
-                calc.set_temp(float(input.get()))
-            else:    
-                calc.set_temp(int(input.get()))
-            calc.op = "+"
-            
+        func = calc.add
     if op == "-":
-        if calc.get_temp() is not None:
-            if dec_in_input():
-                input.update(str(calc.subtract(calc.get_temp(), float(input.get()))))
-            else:
-                input.update(str(calc.subtract(calc.get_temp(), int(input.get()))))
-        else:
-            if dec_in_input():
-                calc.set_temp(float(input.get()))
-            else:    
-                calc.set_temp(int(input.get()))
-            calc.op = "-"
+        func = calc.subtract
     if op == "*":
-        if calc.get_temp() is not None:
-            if dec_in_input():
-                input.update(str(calc.multiply(calc.get_temp(), float(input.get()))))
-            else:
-                input.update(str(calc.multiply(calc.get_temp(), int(input.get()))))
-        else:
-            if dec_in_input():
-                calc.set_temp(float(input.get()))
-            else:
-                calc.set_temp(int(input.get()))
-            calc.op = "*"
+        func = calc.multiply
     if op == "/":
-        if calc.get_temp() is not None:
-            if dec_in_input():
-                input.update(str(calc.divide(calc.get_temp(), float(input.get()))))
-            else:
-                input.update(str(calc.divide(calc.get_temp(), int(input.get()))))
+        func = calc.divide
+    
+    if calc.get_temp() is not None:
+        if dec_in_input():
+            input.update(str(func(calc.get_temp(), float(input.get()))))
         else:
-            if dec_in_input():
-                calc.set_temp(float(input.get()))
-            else:
-                calc.set_temp(int(input.get()))
-            calc.op = "/"
+            input.update(str(func(calc.get_temp(), int(input.get()))))
+    else:
+        if dec_in_input():
+            calc.set_temp(float(input.get()))
+        else:
+            calc.set_temp(int(input.get()))
+        calc.op = op
+
     input.update(value="0")
+
+def special_op(op):
+    if op == "1/x":
+        func = calc.frac
+    if op == "x²":
+        func = calc.square
+    if op == "√x":
+        func = calc.root
+    
+    if dec_in_input():
+        input.update(str(func(float(input.get()))))
+    else:
+        input.update(str(func(int(input.get()))))
 
 def dec_in_input():
     return "." in input.get()
@@ -144,24 +124,21 @@ while True:
             input.update(str(calc.multiply(float(input.get()), 0.01)))    
         else:
             input.update(str(calc.multiply(int(input.get()), 0.01)))
+    
+    if event == "+/-":
+        if dec_in_input():
+            input.update(str(calc.multiply(float(input.get()), -1)))
+        else:    
+            input.update(str(calc.multiply(int(input.get()), -1)))
 
     if event == "1/x":
-        if dec_in_input():
-            input.update(str(calc.frac(float(input.get()))))
-        else:
-            input.update(str(calc.frac(int(input.get()))))
+        special_op("1/x")
 
     if event == "x²":
-        if dec_in_input():
-            input.update(str(calc.square(float(input.get()))))    
-        else:
-            input.update(str(calc.square(int(input.get()))))
+        special_op("x²")
 
     if event == "√x":
-        if dec_in_input():
-            input.update(str(calc.root(float(input.get()))))
-        else:
-            input.update(str(calc.root(int(input.get()))))
+        special_op("√x")
 
     if event == "/":
         arithmetic("/")
@@ -175,33 +152,21 @@ while True:
     if event == "+":
         arithmetic("+")
 
-    if event == "+/-":
-        if dec_in_input():
-            input.update(str(calc.multiply(float(input.get()), -1)))
-        else:    
-            input.update(str(calc.multiply(int(input.get()), -1)))
-
     if event == "=":
         if calc.op == "+":
-            if type(calc.get_temp()) == float:
-                input.update(str(calc.add(calc.get_temp(), float(input.get()))))
-            else:
-                input.update(str(calc.add(calc.get_temp(), int(input.get()))))
+            func = calc.add
         if calc.op == "-":
-            if type(calc.get_temp()) == float:
-                input.update(str(calc.subtract(calc.get_temp(), float(input.get()))))
-            else:
-                input.update(str(calc.subtract(calc.get_temp(), int(input.get()))))
+            func = calc.subtract
         if calc.op == "*":
-            if type(calc.get_temp()) == float:
-                input.update(str(calc.multiply(calc.get_temp(), float(input.get()))))
-            else:
-                input.update(str(calc.multiply(calc.get_temp(), int(input.get()))))
+            func = calc.multiply
         if calc.op == "/":
-            if type(calc.get_temp()) == float:
-                input.update(str(calc.divide(calc.get_temp(), float(input.get()))))
-            else:
-                input.update(str(calc.divide(calc.get_temp(), int(input.get()))))
+            func = calc.divide
+        
+        if type(calc.get_temp()) == float:
+            input.update(str(func(calc.get_temp(), float(input.get()))))
+        else:
+            input.update(str(func(calc.get_temp(), int(input.get()))))
+
         calc.set_temp(None)
         calc.op = None
 
