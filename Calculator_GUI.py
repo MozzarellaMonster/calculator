@@ -24,12 +24,11 @@ layout = [
 window = sg.Window(title="Calculator", layout=layout, margins=(7, 7), element_padding=(1, 1))
 
 # Helper functions
-def update_input(in_value):
+def update_input(in_value): # Updates input for numeric button presses
     if calc.in_operation:
         input.update(value=in_value)
         calc.in_operation = False
     else:
-        #input.update(value=in_value, append=True)
         if input.get() == "0":
             input.update(value=in_value)
         elif in_value == "." and dec_in_input():
@@ -37,19 +36,19 @@ def update_input(in_value):
         else:
             input.update(value=input.get() + in_value)
 
-def delete_last():
+def delete_last(): # Deletes last character in input
     if len(input.get()) == 1:
         input.update(value="0")
     else:
         input.update(value=input.get()[:-1])
 
-def add_to_mem():
+def add_to_mem(): # Adds current input to memory
     if dec_in_input():
         calc.store(float(input.get()))
     else:
         calc.store(int(input.get()))
 
-def arithmetic(op): # Need to fix to allow for multiple presses in succession, almost there
+def arithmetic(op): # Performs arithmetic operation
     if calc.in_operation:
         if calc.op != op:
             calc.op = op
@@ -92,12 +91,11 @@ def arithmetic(op): # Need to fix to allow for multiple presses in succession, a
                 calc.set_temp(float(input.get()))
             else:
                 calc.set_temp(int(input.get()))
-            #input.update(value="0")
 
         calc.in_operation = True
         calc.op = op
 
-def special_op(op):
+def special_op(op): # Performs special operations
     if op == "1/x":
         func = calc.frac
     if op == "x²":
@@ -110,7 +108,7 @@ def special_op(op):
     else:
         input.update(str(func(int(input.get()))))
 
-def equals():
+def equals(): # Performs equals operation
     if calc.op == "+":
         func = calc.add
     if calc.op == "-":
@@ -135,9 +133,8 @@ def equals():
     calc.set_temp(None)
     calc.op = None
 
-def dec_in_input():
+def dec_in_input(): # Checks if decimal is in input
     return "." in input.get()
-
 
 # Event loop
 while True:
