@@ -25,12 +25,17 @@ window = sg.Window(title="Calculator", layout=layout, margins=(7, 7), element_pa
 
 # Helper functions
 def update_input(in_value):
-    if input.get() == "0":
+    if calc.in_operation:
         input.update(value=in_value)
-    elif in_value == "." and dec_in_input():
-        pass
+        calc.in_operation = False
     else:
-        input.update(value=input.get() + in_value)
+        #input.update(value=in_value, append=True)
+        if input.get() == "0":
+            input.update(value=in_value)
+        elif in_value == "." and dec_in_input():
+            pass
+        else:
+            input.update(value=input.get() + in_value)
 
 def delete_last():
     if len(input.get()) == 1:
@@ -44,29 +49,53 @@ def add_to_mem():
     else:
         calc.store(int(input.get()))
 
-def arithmetic(op):
-    if op == "+":
-        func = calc.add
-    if op == "-":
-        func = calc.subtract
-    if op == "*":
-        func = calc.multiply
-    if op == "/":
-        func = calc.divide
-    
-    if calc.get_temp() is not None:
-        if dec_in_input():
-            input.update(str(func(calc.get_temp(), float(input.get()))))
+def arithmetic(op): # Need to fix to allow for multiple presses in succession, almost there
+    if calc.in_operation:
+        if calc.op != op:
+            calc.op = op
         else:
-            input.update(str(func(calc.get_temp(), int(input.get()))))
+            pass
     else:
-        if dec_in_input():
-            calc.set_temp(float(input.get()))
-        else:
-            calc.set_temp(int(input.get()))
-        calc.op = op
+        if op == "+":
+            func = calc.add
+        elif op == "-":
+            func = calc.subtract
+        elif op == "*":
+            func = calc.multiply
+        elif op == "/":
+            func = calc.divide
 
-    input.update(value="0")
+        if calc.op is not None and calc.get_temp() is not None:
+            if calc.op == "+":
+                old_func = calc.add
+            elif calc.op == "-":
+                old_func = calc.subtract
+            elif calc.op == "*":
+                old_func = calc.multiply
+            elif calc.op == "/":
+                old_func = calc.divide
+
+            if dec_in_input():
+                calc.set_temp(old_func(calc.get_temp(), float(input.get())))
+            else:
+                calc.set_temp(old_func(calc.get_temp(), int(input.get())))
+            input.update(value=str(calc.get_temp()))
+
+        elif calc.op is None and calc.get_temp() is not None:
+            if dec_in_input():
+                input.update(str(func(calc.get_temp(), float(input.get()))))
+            else:
+                input.update(str(func(calc.get_temp(), int(input.get()))))
+
+        else:
+            if dec_in_input():
+                calc.set_temp(float(input.get()))
+            else:
+                calc.set_temp(int(input.get()))
+            #input.update(value="0")
+
+        calc.in_operation = True
+        calc.op = op
 
 def special_op(op):
     if op == "1/x":
@@ -80,6 +109,31 @@ def special_op(op):
         input.update(str(func(float(input.get()))))
     else:
         input.update(str(func(int(input.get()))))
+
+def equals():
+    if calc.op == "+":
+        func = calc.add
+    if calc.op == "-":
+        func = calc.subtract
+    if calc.op == "*":
+        func = calc.multiply
+    if calc.op == "/":
+        func = calc.divide
+    
+    if calc.get_temp() is not None:
+        if type(calc.get_temp()) == float:
+            input.update(str(func(calc.get_temp(), float(input.get()))))
+        else:
+            input.update(str(func(calc.get_temp(), int(input.get()))))
+    else:
+        if dec_in_input():
+            calc.set_temp(float(input.get()))
+        else:
+            calc.set_temp(int(input.get()))
+
+    calc.in_operation = False
+    calc.set_temp(None)
+    calc.op = None
 
 def dec_in_input():
     return "." in input.get()
@@ -113,7 +167,10 @@ while True:
         delete_last()
 
     if event == "C":
+        calc.in_operation = False
+        calc.op = None
         input.update(value="0")
+        calc.set_temp(None)
 
     if event == "\u2190":
         delete_last()
@@ -153,22 +210,7 @@ while True:
         arithmetic("+")
 
     if event == "=":
-        if calc.op == "+":
-            func = calc.add
-        if calc.op == "-":
-            func = calc.subtract
-        if calc.op == "*":
-            func = calc.multiply
-        if calc.op == "/":
-            func = calc.divide
-        
-        if type(calc.get_temp()) == float:
-            input.update(str(func(calc.get_temp(), float(input.get()))))
-        else:
-            input.update(str(func(calc.get_temp(), int(input.get()))))
-
-        calc.set_temp(None)
-        calc.op = None
+        equals()
 
     if event == ".":
         update_input(".")

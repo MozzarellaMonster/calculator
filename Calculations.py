@@ -7,6 +7,7 @@ class Calc:
         self.memory = [] # Holds numbers saved to memory
         self.temp = None # Holds temporary numeric value
         self.op = None # Holds current operation
+        self.in_operation = False # Holds whether or not the calculator is currently in an operation
     
     # Arithmetic operations
     def add(self, a, b):
