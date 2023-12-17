@@ -174,7 +174,7 @@ while True:
 
     # Mathematic operators
     if event == "%":
-        if dec_in_input():
+        if dec_in_input() or "e" in input.get():
             input.update(str(calc.multiply(float(input.get()), 0.01)))    
         else:
             input.update(str(calc.multiply(int(input.get()), 0.01)))
