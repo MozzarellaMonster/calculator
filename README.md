@@ -5,6 +5,11 @@ Simple calculator project.
 Calculator icon Copyright(C) 2023 Elegantthemes
 Retrieved from: https://www.iconarchive.com/show/beautiful-flat-icons-by-elegantthemes/Calculator-icon.html
 Icon licensed under GPLv3: https://www.gnu.org/licenses/gpl-3.0.html
+
+
+
+
+
 GNU GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
 
