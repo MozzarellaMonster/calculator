@@ -1,6 +1,6 @@
 # calculator
 
-Simple calculator project.
+Simple calculator project. Project code Copyright(C) 2023 MozzarellaMonster.
 
 Calculator icon Copyright(C) 2023 Elegantthemes
 Retrieved from: https://www.iconarchive.com/show/beautiful-flat-icons-by-elegantthemes/Calculator-icon.html
