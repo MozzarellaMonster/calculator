@@ -8,6 +8,7 @@ class Calc:
         self.temp = None # Holds temporary numeric value
         self.op = None # Holds current operation
         self.in_operation = False # Holds whether or not the calculator is currently in an operation
+        self.eq_pressed = False # Holds whether or not the equal button has been pressed
     
     # Arithmetic operations
     def add(self, a, b):

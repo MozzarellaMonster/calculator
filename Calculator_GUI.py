@@ -6,28 +6,29 @@ import Calculations
 calc = Calculations.Calc()
 
 # Define the window layout
-sg.set_options(font="Arial 12")
+sg.set_options(font="Arial 12", auto_size_text=True, auto_size_buttons=True)
 
-input = sg.Input(size=(25, 4), enable_events=True, key="input", readonly=True, default_text="0", pad=(0, 5), justification="right")
+input = sg.Input(size=(25, 4), enable_events=True, key="input", readonly=True, default_text="0", pad=(0, 5), justification="right", expand_x=True, expand_y=True)
 
 layout = [
     [input],
-    [sg.Button("MC", tooltip="Clear All Memory", expand_x=True, button_color="#4169E1"), sg.Button("MR", tooltip="Memory Recall", expand_x=True, button_color="#4169E1"), sg.Button("M+", tooltip="Add to Memory", expand_x=True, button_color="#4169E1"), sg.Button("M-", tooltip="Subtract from Memory", expand_x=True, button_color="#4169E1"), sg.Button("MS", tooltip="Save to Memory", expand_x=True, button_color="#4169E1")],
-    [sg.Button("%", expand_x=True), sg.Button("CE", tooltip="Clear Last Entry", expand_x=True), sg.Button("C", tooltip="Clear", expand_x=True), sg.Button("\u2190", tooltip="Backspace", expand_x=True, button_color="gray")],
-    [sg.Button("1/x", expand_x=True), sg.Button("x²", expand_x=True), sg.Button("√x", expand_x=True), sg.Button("/", expand_x=True)],
-    [sg.Button("7", expand_x=True), sg.Button("8", expand_x=True), sg.Button("9", expand_x=True), sg.Button("*", expand_x=True)],
-    [sg.Button("4", expand_x=True), sg.Button("5", expand_x=True), sg.Button("6", expand_x=True), sg.Button("-", expand_x=True)],
-    [sg.Button("1", expand_x=True), sg.Button("2", expand_x=True), sg.Button("3", expand_x=True), sg.Button("+", expand_x=True)],
-    [sg.Button("+/-", expand_x=True), sg.Button("0", expand_x=True), sg.Button(".", expand_x=True), sg.Button("=", expand_x=True, button_color="orange")]
+    [sg.Button("MC", tooltip="Clear All Memory", expand_x=True, expand_y=True, button_color="#4169E1"), sg.Button("MR", tooltip="Memory Recall", expand_x=True, expand_y=True, button_color="#4169E1"), sg.Button("M+", tooltip="Add to Memory", expand_x=True, expand_y=True, button_color="#4169E1"), sg.Button("M-", tooltip="Subtract from Memory", expand_x=True, expand_y=True, button_color="#4169E1"), sg.Button("MS", tooltip="Save to Memory", expand_x=True, expand_y=True, button_color="#4169E1")],
+    [sg.Button("%", expand_x=True, expand_y=True), sg.Button("CE", tooltip="Clear Last Entry", expand_x=True, expand_y=True), sg.Button("C", tooltip="Clear", expand_x=True, expand_y=True), sg.Button("\u2190", tooltip="Backspace", expand_x=True, expand_y=True, button_color="gray")],
+    [sg.Button("1/x", expand_x=True, expand_y=True), sg.Button("x²", expand_x=True, expand_y=True), sg.Button("√x", expand_x=True, expand_y=True), sg.Button("/", expand_x=True, expand_y=True)],
+    [sg.Button("7", expand_x=True, expand_y=True), sg.Button("8", expand_x=True, expand_y=True), sg.Button("9", expand_x=True, expand_y=True), sg.Button("*", expand_x=True, expand_y=True)],
+    [sg.Button("4", expand_x=True, expand_y=True), sg.Button("5", expand_x=True, expand_y=True), sg.Button("6", expand_x=True, expand_y=True), sg.Button("-", expand_x=True, expand_y=True)],
+    [sg.Button("1", expand_x=True, expand_y=True), sg.Button("2", expand_x=True, expand_y=True), sg.Button("3", expand_x=True, expand_y=True), sg.Button("+", expand_x=True, expand_y=True)],
+    [sg.Button("+/-", expand_x=True, expand_y=True), sg.Button("0", expand_x=True, expand_y=True), sg.Button(".", expand_x=True, expand_y=True), sg.Button("=", expand_x=True, expand_y=True, button_color="orange")]
     ]
 
-window = sg.Window(title="Calculator", layout=layout, margins=(7, 7), element_padding=(1, 1), auto_size_buttons=True, grab_anywhere=True, auto_size_text=True, resizable=True, icon="calculator.ico")
+window = sg.Window(title="Calculator", layout=layout, margins=(7, 7), element_padding=(1, 1), grab_anywhere=True, resizable=True, icon="calculator.ico")
 
 # Helper functions
 def update_input(in_value): # Updates input for numeric button presses
-    if calc.in_operation:
+    if calc.in_operation or calc.eq_pressed:
         input.update(value=in_value)
         calc.in_operation = False
+        calc.eq_pressed = False
     else:
         if input.get() == "0":
             input.update(value=in_value)
@@ -38,6 +39,8 @@ def update_input(in_value): # Updates input for numeric button presses
 
 def delete_last(): # Deletes last character in input
     if len(input.get()) == 1:
+        input.update(value="0")
+    elif calc.eq_pressed:
         input.update(value="0")
     else:
         input.update(value=input.get()[:-1])
@@ -132,6 +135,7 @@ def equals(): # Performs equals operation
     calc.in_operation = False
     calc.set_temp(None)
     calc.op = None
+    calc.eq_pressed = True
 
 def dec_in_input(): # Checks if decimal is in input
     return "." in input.get()
@@ -165,6 +169,7 @@ while True:
 
     if event == "C":
         calc.in_operation = False
+        calc.eq_pressed = False
         calc.op = None
         input.update(value="0")
         calc.set_temp(None)
